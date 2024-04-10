@@ -7,15 +7,27 @@ pipeline{
     }
   }
   stage('ContinuousBuild') {
-  steps {
-    sh 'mvn package'
+     steps {
+        sh 'mvn package'
   }
 }
 stage('ContinuousDeployment') {
   steps {
-    deploy adapters: [tomcat9(credentialsId: '6c6129b6-19e7-410d-88e9-8ccf2b838085', path: '', 
-    url: 'http://172.31.17.246:8080')], contextPath: 'testapp', war: '**/*.war'
+    deploy adapters: [tomcat9(credentialsId: 'e8e2d28a-4eac-43d4-9f67-c3ce8e85067c', path: '', 
+    url: 'http://172.31.27.39:8080')], contextPath: 'testapp', war: '**/*.war'
   }
 }
+stage('ContinuousTesting') {
+  steps {
+    git 'https://github.com/Shrinivasc/AutomationTesting.git'
+    sh 'java -jar /home/ubuntu/.jenkins/workspace/DeclarativePipeline/testing.jar'
+  }
 }
+stage('ContinuousDelivery') {
+  steps {
+    deploy adapters: [tomcat9(credentialsId: '60cf1396-a681-4595-99a0-bfd3e6249732', path: '', 
+    url: 'http://172.31.21.226:8080')], contextPath: 'prodapp', war: '**/*.war'
+  }
+}
+  }
 }
