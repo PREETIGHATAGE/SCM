@@ -1,0 +1,21 @@
+pipeline{
+    agent any
+    stages {
+  stage('ContinuousDownload') {
+    steps {
+      git 'https://github.com/Shrinivasc/maven.git'
+    }
+  }
+  stage('ContinuousBuild') {
+  steps {
+    sh 'mvn package'
+  }
+}
+stage('ContinuousDeployment') {
+  steps {
+    deploy adapters: [tomcat9(credentialsId: '6c6129b6-19e7-410d-88e9-8ccf2b838085', path: '', 
+    url: 'http://172.31.17.246:8080')], contextPath: 'testapp', war: '**/*.war'
+  }
+}
+}
+}
